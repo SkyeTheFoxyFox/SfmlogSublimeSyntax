@@ -153,148 +153,295 @@ contexts:
       pop: true
 
   instruction_op:
-    - match: \b(add|sub|mul|div|idiv|mod|pow|equal|notEqual|land|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|shl|shr|or|and|xor|not|max|min|angle|len|noise|abs|log|log10|floor|ceil|sqrt|rand|sin|cos|tan|asin|acos|atan|angleDiff)\b
-      scope: keyword.operator.mlog
-      pop: true
-
+    - match: ( )
+      set:
+      - match: \b(add|sub|mul|div|idiv|mod|pow|equal|notEqual|land|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|shl|shr|or|and|xor|not|max|min|angle|len|noise|abs|log|log10|floor|ceil|sqrt|rand|sin|cos|tan|asin|acos|atan|angleDiff)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
   instruction_jump:
     - match: \b(\S)+\b
       scope: variable.function.mlog
       set:
-      - match: \b(equal|notEqual|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|always)\b
+        - match: ( )
+          set:
+          - match: \b(equal|notEqual|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|always)\b
+            scope: keyword.operator.mlog
+            pop: true
+          - match: ( )
+            pop: true
+
+  instruction_draw:
+    - match: ( )
+      set:
+      - match: \b(clear|color|col|stroke|line|rect|lineRect|poly|linePoly|triangle|image)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  instruction_radar:
+    - match: ( )
+      set:
+      - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
+        scope: keyword.operator.mlog
+        push: instruction_radar2
+        pop: true
+      - match: \b
+        push: instruction_radar2
+        pop: true
+          
+  instruction_radar2:
+    - match: ( )
+      set:
+      - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
+        scope: keyword.operator.mlog
+        push: instruction_radar3
+        pop: true
+      - match: \b
+        push: instruction_radar3
+        pop: true
+
+  instruction_radar3:
+    - match: ( )
+      set:
+      - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
+        scope: keyword.operator.mlog
+        push: instruction_radar4
+        pop: true
+      - match: \b
+        push: instruction_radar4
+        pop: true
+
+  instruction_radar4:
+    - match: ( )
+      set:
+      - match: \b(distance|health|shield|armor|maxHealth)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: \b
+        pop: true
+
+  instruction_control:
+    - match: ( )
+      set:
+      - match: \b(enabled|shoot|shootp|config|color)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  instruction_lookup:
+    - match: ( )
+      set:
+      - match: \b(block|unit|item|liquid)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  instruction_ucontrol:
+    - match: ( )
+      set:
+      - match: \b(idle|stop|move|approach|boost|target|targetp|itemDrop|itemTake|payDrop|payTake|payEnter|mine|flag|build|getBlock|within|unbind|pathfind|autoPathfind)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  instruction_uradar:
+    - match: ( )
+      set:
+      - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
+        scope: keyword.operator.mlog
+        push: instruction_uradar2
+        pop: true
+      - match: ( )
+        push: instruction_uradar2
+        pop: true
+
+  instruction_uradar2:
+    - match: ( )
+      set:
+      - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
+        scope: keyword.operator.mlog
+        push: instruction_uradar3
+        pop: true
+      - match: \b
+        push: instruction_uradar3
+        pop: true
+
+  instruction_uradar3:
+    - match: ( )
+      set:
+      - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
+        scope: keyword.operator.mlog
+        push: instruction_uradar4
+        pop: true
+      - match: \b
+        push: instruction_uradar4
+        pop: true
+
+  instruction_uradar4:
+    - match: ( )
+      set:
+      - match: \b(distance|health|shield|armor|maxHealth)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: \b
+        pop: true
+
+  instruction_ulocate:
+    - match: ( )
+      set:
+      - match: \b(ore|spawn|damaged)\b
         scope: keyword.operator.mlog
         pop: true
 
-  instruction_draw:
-    - match: \b(clear|color|col|stroke|line|rect|lineRect|poly|linePoly|triangle|image)\b
-      scope: keyword.operator.mlog
-      pop: true
+      - match: \b(building)\b
+        scope: keyword.operator.mlog
+        push: instruction_ulocate2
+        pop: true
+          
+      - match: ( )
+        pop: true
 
-  instruction_radar:
-    - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
-      scope: keyword.operator.mlog
+  instruction_ulocate2:
+    - match: ( )
       set:
-        - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
-          scope: keyword.operator.mlog
-          set:
-            - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
-              scope: keyword.operator.mlog
-              set:
-                - match: \b(distance|health|shield|armor|maxHealth)\b
-                  scope: keyword.operator.mlog
-                  pop: true
-
-  instruction_control:
-    - match: \b(enabled|shoot|shootp|config|color)\b
-      scope: keyword.operator.mlog
-      pop: true
-
-  instruction_lookup:
-    - match: \b(block|unit|item|liquid)\b
-      scope: keyword.operator.mlog
-      pop: true
-
-  instruction_ucontrol:
-    - match: \b(idle|stop|move|approach|boost|target|targetp|itemDrop|itemTake|payDrop|payTake|payEnter|mine|flag|build|getBlock|within|unbind|pathfind|autoPathfind)\b
-      scope: keyword.operator.mlog
-      pop: true
-
-  instruction_uradar:
-    - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
-      scope: keyword.operator.mlog
-      set:
-        - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
-          scope: keyword.operator.mlog
-          set:
-            - match: \b(any|enemy|ally|player|attacker|flying|boss|ground)\b
-              scope: keyword.operator.mlog
-              set:
-                - match: \b(distance|health|shield|armor|maxHealth)\b
-                  scope: keyword.operator.mlog
-                  pop: true
-
-  instruction_ulocate:
-    - match: \b(ore|spawn|damaged)\b
-      scope: keyword.operator.mlog
-      pop: true
-
-    - match: \b(building)\b
-      scope: keyword.operator.mlog
-      set:
-        - match: \b(core|storage|generator|turret|factory|repair|battery|reactor)\b
-          scope: keyword.operator.mlog
-          pop: true
+      - match: \b(core|storage|generator|turret|factory|repair|battery|reactor)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: \b
+        pop: true
 
   winstruction_getblock:
-    - match: \b(floor|ore|block|building)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(floor|ore|block|building)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_setblock:
-    - match: \b(floor|ore|block)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(floor|ore|block)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_status:
-    - match: \b(true|false)\b
-      scope: keyword.operator.mlog
+    - match: ( )
       set:
-        - match: \b(burning|freezing|unmoving|wet|melting|sapped|electrified|spore-slowed|tarred|overdrive|overclock|boss|shocked|blasted|disarmed|invincible|slow|corroded|muddy)\b
-          scope: keyword.operator.mlog
-          pop: true
+      - match: \b(true|false)\b
+        scope: keyword.operator.mlog
+        push: winstruction_status2
+        pop: true
+      - match: ( )
+        pop: true
+          
+
+  winstruction_status2:
+    - match: ( )
+      set:
+      - match: \b(burning|freezing|unmoving|wet|melting|sapped|electrified|spore-slowed|tarred|overdrive|overclock|boss|shocked|blasted|disarmed|invincible|slow|corroded|muddy)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: \b
+        pop: true
 
   winstruction_setrule:
-    - match: \b(currentWaveTime|waveTimer|waves|wave|waveSpacing|waveSending|attackMode|enemyCoreBuildRadius|dropSoneRadius|unitCap|mapArea|lighting|ambientLight|solarMultiplier|buildSpeed|unitBuildSpeed|unitCost|unitDamage|blockHealth|blockDamage|rtsMinWeight|rtsMinSquad)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(currentWaveTime|waveTimer|waves|wave|waveSpacing|waveSending|attackMode|enemyCoreBuildRadius|dropSoneRadius|unitCap|mapArea|lighting|ambientLight|solarMultiplier|buildSpeed|unitBuildSpeed|unitCost|unitDamage|blockHealth|blockDamage|rtsMinWeight|rtsMinSquad)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_message:
-    - match: \b(notify|announce|toast|mission)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(notify|announce|toast|mission)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_cutscene:
-    - match: \b(pan|zoom|stop)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(pan|zoom|stop)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_fetch:
-    - match: \b(unit|unitCount|player|playerCount|core|coreCount|build|buildCount )\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(unit|unitCount|player|playerCount|core|coreCount|build|buildCount )\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_effect:
-    - match: \b(warn|cross|blockFall|placeBlock|placeBlockSpark|breakBlock|spawn|trail|breakProp|smokeCloud|vapor|hit|hitSquare|shootSmall|shootBig|smokeSmall|smokeBig|smokeColor|smokeSquare|smokeSquareBig|spark|sparkBig|sparkShoot|sparkShootBig|drill|drillBig|lightBlock|explosion|smokePuff|sparkExplosion|crossExplosion|wave|bubble)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(warn|cross|blockFall|placeBlock|placeBlockSpark|breakBlock|spawn|trail|breakProp|smokeCloud|vapor|hit|hitSquare|shootSmall|shootBig|smokeSmall|smokeBig|smokeColor|smokeSquare|smokeSquareBig|spark|sparkBig|sparkShoot|sparkShootBig|drill|drillBig|lightBlock|explosion|smokePuff|sparkExplosion|crossExplosion|wave|bubble)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   sfinstruction_mac:
-    - match: \b(define)\b
-      scope: keyword.operator.mlog
+    - match: ( )
       set:
-        - match: \b(\S)+\b
-          scope: variable.function.mlog
-          pop: true
-    - match: \b(end)\b
-      scope: keyword.operator.mlog
-      pop: true
-    - match: \b(\S)+\b
-      scope: variable.function.mlog
-      pop: true
+      - match: \b(define)\b
+        scope: keyword.operator.mlog
+        set:
+          - match: \b(\S)+\b
+            scope: variable.function.mlog
+            pop: true
+      - match: \b(end)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: \b(\S)+\b
+        scope: variable.function.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   sfinstruction_arr:
-    - match: \b(define|write|read)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(define|write|read)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_makemarker:
-    - match: \b.\b
-    - match: \b(shapeText|minimap|shape|text|line)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b.\b
+      - match: \b(shapeText|minimap|shape|text|line)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
   winstruction_setmarker:
-    - match: \b(remove|setVisibility|toggleVisibility|text|flushText|x|y|pos|endX|endY|endPos|fontSize|textHeight|labelBackground|labelOutline|labelFlags|radius|stroke|rotation|shapeSides|shapeFill|shapeOutline|setShape|color)\b
-      scope: keyword.operator.mlog
-      pop: true
+    - match: ( )
+      set:
+      - match: \b(remove|setVisibility|toggleVisibility|text|flushText|x|y|pos|endX|endY|endPos|fontSize|textHeight|labelBackground|labelOutline|labelFlags|radius|stroke|rotation|shapeSides|shapeFill|shapeOutline|setShape|color)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
 
