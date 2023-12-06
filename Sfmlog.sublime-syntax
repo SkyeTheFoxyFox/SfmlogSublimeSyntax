@@ -131,7 +131,11 @@ contexts:
       scope: keyword.control.mlog
       push: sfinstruction_mac
 
-    - match: ^(\s)*(set|packcolor|read|write|print|printflush|drawflush|getlink|sensor|wait|stop|end|ubind|spawn|spawnwave|explosion|setrate|getflag|setflag|setprop|sync|noop|include|swrite|const|printf)\b
+    - match: ^(\s)*(cop)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_cop
+
+    - match: ^(\s)*(set|packcolor|read|write|print|printflush|drawflush|getlink|sensor|wait|stop|end|ubind|spawn|spawnwave|explosion|setrate|getflag|setflag|setprop|sync|noop|format|localeprint|include|swrite|const|printf)\b
       scope: keyword.control.mlog
 
 
@@ -160,6 +164,7 @@ contexts:
         pop: true
       - match: ( )
         pop: true
+
   instruction_jump:
     - match: \b(\S)+\b
       scope: variable.function.mlog
@@ -445,3 +450,11 @@ contexts:
       - match: ( )
         pop: true
 
+  sfinstruction_cop:
+    - match: ( )
+      set:
+      - match: \b(add|sub|mul|div|idiv|mod|pow|equal|notEqual|land|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|shl|shr|or|and|xor|not|max|min|angle|len|noise|abs|log|log10|floor|ceil|sqrt|rand|sin|cos|tan|asin|acos|atan|angleDiff)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
