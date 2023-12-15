@@ -131,6 +131,14 @@ contexts:
       scope: keyword.control.mlog
       push: sfinstruction_mac
 
+    - match: ^(\s)*(fun)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_fun
+
+    - match: ^(\s)*(def)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_def
+
     - match: ^(\s)*(cop)\b
       scope: keyword.control.mlog
       push: sfinstruction_cop
@@ -405,9 +413,25 @@ contexts:
         pop: true
 
   sfinstruction_mac:
+    - match: \b(\S)+\b
+      scope: variable.function.mlog
+      pop: true
+
+  sfinstruction_fun:
+    - match: \b(\S)+\b
+      scope: variable.function.mlog
+      pop: true
+
+  sfinstruction_def:
     - match: ( )
       set:
-      - match: \b(define)\b
+      - match: \b(mac)\b
+        scope: keyword.operator.mlog
+        set:
+          - match: \b(\S)+\b
+            scope: variable.function.mlog
+            pop: true
+      - match: \b(fun)\b
         scope: keyword.operator.mlog
         set:
           - match: \b(\S)+\b
