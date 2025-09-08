@@ -35,6 +35,9 @@ contexts:
       scope: constant.other.mlog
       push: content_type
 
+    - match: '(\$|<|>|<>)\b'
+      scope: keyword.operator.mlog
+
     - match: \bnull\b
       scope: constant.language.mlog
 
@@ -44,7 +47,7 @@ contexts:
     - match: \bfalse\b
       scope: constant.language.mlog
 
-    - match: ^(.)+:$
+    - match: ^(\s)*(.)+:\s$
       scope: variable.function.mlog
 
     - match: ^(\s)*(op)\b
@@ -123,30 +126,51 @@ contexts:
       scope: keyword.control.mlog
       push: winstruction_setmarker
 
-    - match: ^(\s)*(arr)\b
-      scope: keyword.control.mlog
-      push: sfinstruction_arr
-
-    - match: ^(\s)*(mac)\b
-      scope: keyword.control.mlog
-      push: sfinstruction_mac
-
-    - match: ^(\s)*(fun)\b
-      scope: keyword.control.mlog
-      push: sfinstruction_fun
-
-    - match: ^(\s)*(def)\b
-      scope: keyword.control.mlog
-      push: sfinstruction_def
-
-    - match: ^(\s)*(cop)\b
-      scope: keyword.control.mlog
-      push: sfinstruction_cop
-
-    - match: ^(\s)*(set|packcolor|read|write|print|printflush|drawflush|getlink|sensor|wait|stop|end|ubind|spawn|spawnwave|explosion|setrate|getflag|setflag|setprop|sync|noop|format|localeprint|include|swrite|const|printf)\b
+    - match: ^(\s)*(set|packcolor|read|write|print|printflush|drawflush|getlink|sensor|wait|stop|end|ubind|spawn|spawnwave|explosion|setrate|getflag|setflag|setprop|sync|noop|format|localeprint)\b
       scope: keyword.control.mlog
 
+    - match: ^(\s)*(mac|fun|call)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_gen_call
 
+    - match: ^(\s)*(defmac|deffun)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_gen_define
+
+    - match: ^(\s)*(if|while)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_gen_condition
+
+    - match: ^(\s)*(for)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_for
+
+    - match: ^(\s)*(pop)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_pop
+
+    - match: ^(\s)*(strop)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_strop
+
+    - match: ^(\s)*(strvar)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_strvar
+
+    - match: ^(\s)*(list)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_list
+
+    - match: ^(\s)*(table)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_table
+
+    - match: ^(\s)*(file)\b
+      scope: keyword.control.mlog
+      push: sfinstruction_file
+
+    - match: ^(\s)*(import|pset|proc|block|type|strlabel|discard|log|error)\b
+      scope: keyword.control.mlog
 
   double_quoted_string:
     - meta_scope: string.quoted.double.mlog
@@ -174,6 +198,19 @@ contexts:
         pop: true
 
   instruction_jump:
+    - match: \$\b
+      scope: keyword.operator.mlog
+      set:
+        - match: \b(\S)+\b
+          scope: variable.function.mlog
+          set:
+            - match: ( )
+              set:
+              - match: \b(equal|notEqual|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|always)\b
+                scope: keyword.operator.mlog
+                pop: true
+              - match: ( )
+                pop: true
     - match: \b(\S)+\b
       scope: variable.function.mlog
       set:
@@ -412,54 +449,11 @@ contexts:
       - match: ( )
         pop: true
 
-  sfinstruction_mac:
-    - match: \b(\S)+\b
-      scope: variable.function.mlog
-      pop: true
-
-  sfinstruction_fun:
-    - match: \b(\S)+\b
-      scope: variable.function.mlog
-      pop: true
-
-  sfinstruction_def:
-    - match: ( )
-      set:
-      - match: \b(mac)\b
-        scope: keyword.operator.mlog
-        set:
-          - match: \b(\S)+\b
-            scope: variable.function.mlog
-            pop: true
-      - match: \b(fun)\b
-        scope: keyword.operator.mlog
-        set:
-          - match: \b(\S)+\b
-            scope: variable.function.mlog
-            pop: true
-      - match: \b(end)\b
-        scope: keyword.operator.mlog
-        pop: true
-      - match: \b(\S)+\b
-        scope: variable.function.mlog
-        pop: true
-      - match: ( )
-        pop: true
-
-  sfinstruction_arr:
-    - match: ( )
-      set:
-      - match: \b(define|write|read)\b
-        scope: keyword.operator.mlog
-        pop: true
-      - match: ( )
-        pop: true
-
   winstruction_makemarker:
     - match: ( )
       set:
       - match: \b.\b
-      - match: \b(shapeText|minimap|shape|text|line)\b
+      - match: \b(shapeText|minimap|shape|text|line|texture|quad)\b
         scope: keyword.operator.mlog
         pop: true
       - match: ( )
@@ -474,10 +468,83 @@ contexts:
       - match: ( )
         pop: true
 
-  sfinstruction_cop:
+  sfinstruction_gen_call:
+    - match: \b(\S)+\b
+      scope: variable.function.mlog
+      pop: true
+
+  sfinstruction_gen_define:
+    - match: \b(\S)+\b
+      scope: variable.function.mlog
+      pop: true
+
+  sfinstruction_gen_condition:
+    - match: ( )
+      set:
+      - match: \b(equal|notEqual|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|always|in)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_for:
+    - match: ( )
+      set:
+      - match: \b(range|list|enumerate|table)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_pop:
     - match: ( )
       set:
       - match: \b(add|sub|mul|div|idiv|mod|pow|equal|notEqual|land|lessThan|lessThanEq|greaterThan|greaterThanEq|strictEqual|shl|shr|or|and|xor|not|max|min|angle|len|noise|abs|log|log10|floor|ceil|sqrt|rand|sin|cos|tan|asin|acos|atan|angleDiff)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_strop:
+    - match: ( )
+      set:
+      - match: \b(cat|num|charat|substr|split|rematch|refine|regroups|rematchall)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_strvar:
+    - match: ( )
+      set:
+      - match: \b(local|global|unscoped)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_list:
+    - match: ( )
+      set:
+      - match: \b(from|copy|set|get|append|insert|del|len|index|in)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_table:
+    - match: ( )
+      set:
+      - match: \b(from|copy|set|get|del|in)\b
+        scope: keyword.operator.mlog
+        pop: true
+      - match: ( )
+        pop: true
+
+  sfinstruction_file:
+    - match: ( )
+      set:
+      - match: \b(open|openbin|close|read|readbytes)\b
         scope: keyword.operator.mlog
         pop: true
       - match: ( )
